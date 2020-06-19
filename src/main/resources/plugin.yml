@@ -1,0 +1,7 @@
+name: MailIt
+version: @version@
+main: com.drazisil.mailit.Mailit
+api-version: "1.15"
+authors: [Drazisil]
+description: A mail system
+
