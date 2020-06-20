@@ -1,5 +1,6 @@
 package com.drazisil.mailit;
 
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -19,8 +20,14 @@ public final class Mailit extends JavaPlugin {
         logger = plugin.getLogger();
         mailboxManager = new MailboxManager();
 
-        plugin.getServer().getPluginManager().registerEvents(new ItemListener(), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new PLayerListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new PlayerListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new InventoryListener(), plugin);
+
+        PluginCommand cmdSend = plugin.getCommand("send");
+        if (cmdSend != null) cmdSend.setExecutor(new CommandSend());
+
+        PluginCommand cmdMail = plugin.getCommand("mail");
+        if (cmdMail != null) cmdMail.setExecutor(new CommandMail());
 
     }
 

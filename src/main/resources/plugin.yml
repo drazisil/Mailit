@@ -5,3 +5,20 @@ api-version: "1.15"
 authors: [Drazisil]
 description: A mail system
 
+commands:
+  mail:
+    description: "Check your mail."
+    usage: "/<command>"
+    permission: mailit.mailbox
+  send:
+    description: "Send a new package."
+    usage: "/<command> send <player's name>"
+    permission: mailit.send
+permissions:
+  mailit.mailbox:
+    description: Allow players to check mail
+    default: true
+  mailit.send:
+    description: Allow players to send mail
+    default: true
+

@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import static com.drazisil.mailit.Mailit.logger;
 import static com.drazisil.mailit.Mailit.plugin;
 
-public class PLayerListener implements Listener {
+public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {

@@ -5,7 +5,9 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 
 public class MailboxManager {
+
     private final ArrayList<PlayerMailbox> mailboxes = new ArrayList<>();
+
 
     public PlayerMailbox getMailbox(Player player) {
         for (PlayerMailbox mailbox:mailboxes) {
@@ -25,4 +27,6 @@ public class MailboxManager {
         }
         return false;
     }
+
+
 }
