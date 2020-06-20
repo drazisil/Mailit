@@ -23,7 +23,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import static com.drazisil.mailit.Mailit.logger;
 import static com.drazisil.mailit.Mailit.plugin;
 
 public class PlayerListener implements Listener {
@@ -31,15 +30,13 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+
+        // Get the mailbox for the player.
         MailboxManager mailboxManager = plugin.getMailboxManager();
 
-        if (!(mailboxManager.hasMailbox(player))) {
-            PlayerMailbox mailbox = new PlayerMailbox(player);
+        int pkgCount = mailboxManager.getPackageCountByReceiver(player);
 
-            mailboxManager.addMailboxes(mailbox);
+        player.sendMessage(String.format("You have %d packages in your mailbox.", pkgCount));
 
-            logger.info(String.format("New mailbox registered for %s", player.getName()));
-
-        }
     }
 }

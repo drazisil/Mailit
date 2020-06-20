@@ -53,22 +53,11 @@ public class CommandSend implements CommandExecutor {
         logger.info(String.format("%s used the send command for %s", sender.getName(), receivingPlayerName));
 
         // Get the mailbox for the player.
-        PlayerMailbox mailbox = plugin.getMailboxManager().getMailbox(sendingPlayer);
+        MailboxManager mailboxManager = plugin.getMailboxManager();
 
-        if (mailbox == null) {
-            // We should never hit this, log a warning
-            logger.warning(String.format("Unable to locate mailbox for %s!", sendingPlayer.getName()));
-            return true;
-        }
+        MailPackage newPackage = mailboxManager.newPackage(sendingPlayer, receivingPlayer);
 
-        // Is the mailbox in use?
-        if (mailbox.isInUse()) return true;
-        //TODO: Come back and fix this
-        mailbox.setInUse(true);
-
-        MailPackage newPackage = mailbox.newPackage(receivingPlayer);
-
-        sendingPlayer.openInventory(newPackage.getInventory());
+        newPackage.open(sendingPlayer);
 
         return true;
     }

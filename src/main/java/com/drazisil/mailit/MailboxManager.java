@@ -19,32 +19,55 @@
 package com.drazisil.mailit;
 
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class MailboxManager {
 
-    private final ArrayList<PlayerMailbox> mailboxes = new ArrayList<>();
+    //    private final ArrayList<PlayerMailbox> mailboxes = new ArrayList<>();
+    private final ArrayList<MailPackage> pkgList = new ArrayList<>();
 
+    public ArrayList<MailPackage> getPackagesBySender(Player player) {
+        ArrayList<MailPackage> playerPackages = new ArrayList<>();
 
-    public PlayerMailbox getMailbox(Player player) {
-        for (PlayerMailbox mailbox:mailboxes) {
-            if (mailbox.getOwner() == player) return mailbox;
+        for (MailPackage pkg : pkgList) {
+            if (pkg.getFrom() == player) playerPackages.add(pkg);
+        }
+        return playerPackages;
+    }
+
+    public int getPackageCountBySender(Player player) {
+        ArrayList<MailPackage> playerPackages = getPackagesBySender(player);
+        return playerPackages.size();
+    }
+
+    public ArrayList<MailPackage> getPackagesByReceiver(Player player) {
+        ArrayList<MailPackage> playerPackages = new ArrayList<>();
+
+        for (MailPackage pkg : pkgList) {
+            if (pkg.getTo() == player) playerPackages.add(pkg);
+        }
+        return playerPackages;
+    }
+
+    public int getPackageCountByReceiver(Player player) {
+        ArrayList<MailPackage> playerPackages = getPackagesByReceiver(player);
+        return playerPackages.size();
+    }
+
+    public MailPackage newPackage(Player sendingPlayer, Player receivingPlayer) {
+        MailPackage newPkg = new MailPackage(sendingPlayer, receivingPlayer);
+        pkgList.add(newPkg);
+        return newPkg;
+    }
+
+    @Nullable
+    public MailPackage getPackageById(UUID packageId) {
+        for (MailPackage pkg : pkgList) {
+            if (pkg.getId().equals(packageId)) return pkg;
         }
         return null;
     }
-
-    public void addMailboxes(PlayerMailbox mailbox) {
-        this.mailboxes.add(mailbox);
-    }
-
-    public boolean hasMailbox(Player player) {
-
-        for (PlayerMailbox mailbox:mailboxes) {
-            if (mailbox.getOwner() == player) return true;
-        }
-        return false;
-    }
-
-
 }

@@ -38,9 +38,11 @@ public class CommandMail implements CommandExecutor {
         Player sendingPlayer = (Player) sender;
 
         // Get the mailbox for the player.
-        PlayerMailbox mailbox = plugin.getMailboxManager().getMailbox(sendingPlayer);
+        MailboxManager mailboxManager = plugin.getMailboxManager();
 
-        sendingPlayer.sendMessage(String.format("You have %d packages in your mailbox.", mailbox.getPackageCount()));
+        int pkgCount = mailboxManager.getPackageCountBySender(sendingPlayer);
+
+        sendingPlayer.sendMessage(String.format("You have %d packages in your mailbox.", pkgCount));
 
         return true;
     }

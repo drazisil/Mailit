@@ -35,6 +35,7 @@ public class MailPackage implements InventoryHolder {
     private final int mailboxSize = 27;
     private final int lastSlotIndex = mailboxSize - 1;
     private final UUID id;
+    private boolean isOpen = false;
 
     public MailPackage(Player playerFrom, Player playerTo) {
         this.id = UUID.randomUUID();
@@ -62,5 +63,22 @@ public class MailPackage implements InventoryHolder {
 
     public UUID getId() {
         return this.id;
+    }
+
+    public void open(Player player) {
+        if (isOpen) {
+            player.sendMessage("That package is currently being looked at, try again later.");
+            return;
+        }
+        setOpen(true);
+        from.openInventory(getInventory());
+    }
+
+    public void setOpen(boolean open) {
+        isOpen = open;
+    }
+
+    public void close() {
+        setOpen(false);
     }
 }
