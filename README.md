@@ -1,3 +1,20 @@
-# Mailit
+# ![Vector icon with a basic mailbox. Open box with the flag lifted up, rolled newspaper in the mailbox.](https://github.com/drazisil/Mailit/blob/master/src/main/resources/FreeVector-Mailbox-Vector.jpg?raw=true) Mailit
 
-Inspired by https://www.spigotmc.org/resources/rcmailbox-send-items-to-online-offline-players-1-7-1-13.60636/
+Mailit is a Minecraft Bukkit plugin to allow for player mailboxes.
+
+Any versions tagged `-SNAPSHOT` are development versions that may not be feature complete (but hopefully don't error)
+
+### Planned Features:
+
+* Send items between players
+* Notify players of new mail when they join
+* Allow server staff to access player mailboxes for security and abuse reasons
+
+Any additional feature requests, please submit them at the [support link](https://github.com/drazisil/Mailit/issues) and I will see what I can do.
+
+Enjoy!
+
+### Credits:
+
+* This plugin is inspired by [RCMailbox](https://www.spigotmc.org/resources/rcmailbox-send-items-to-online-offline-players-1-7-1-13.60636/), which does not currently work for 1.15.
+* Mailbox icon from [freevector.com](https://www.freevector.com/mailbox-vector) and is used under the CCA 4.0 license.
