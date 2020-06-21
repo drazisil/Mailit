@@ -29,19 +29,11 @@ import static com.drazisil.mailit.Mailit.plugin;
 
 public class MailboxManager {
 
-    //    private final ArrayList<PlayerMailbox> mailboxes = new ArrayList<>();
-    private final ArrayList<MailPackage> pkgList = new ArrayList<>();
+    private final ArrayList<MailPackage> pendingPackages = new ArrayList<>();
 
     public ArrayList<MailPackage> getPackagesByReceiver(Player player) throws SQLException {
 
-        ArrayList<MailPackage> playerPackagesRaw = plugin.getDatabaseManager().retrieveByReceiver(player.getName());
-
-        ArrayList<MailPackage> playerPackages = new ArrayList<>();
-
-        for (MailPackage pkg : pkgList) {
-            if (pkg.getTo() == player) playerPackages.add(pkg);
-        }
-        return playerPackages;
+        return plugin.getDatabaseManager().retrieveByReceiver(player.getName());
     }
 
     public int getPackageCountByReceiver(Player player) throws SQLException {
@@ -49,21 +41,34 @@ public class MailboxManager {
         return playerPackages.size();
     }
 
-    public MailPackage newPackage(Player sendingPlayer, Player receivingPlayer) {
-        MailPackage newPkg = new MailPackage(sendingPlayer, receivingPlayer);
-        pkgList.add(newPkg);
-        return newPkg;
+    public MailPackage newPackage(Player sendingPlayer, Player receivingPlayer) throws SQLException {
+
+        MailPackage mailPackage = new MailPackage(sendingPlayer, receivingPlayer);
+
+        return mailPackage;
+
+    }
+
+    public void removePackageById(MailPackage mailPackage) throws SQLException {
+        plugin.getDatabaseManager().delete(mailPackage);
+        pendingPackages.remove(mailPackage);
     }
 
     @Nullable
-    public MailPackage getPackageById(UUID packageId) {
-        for (MailPackage pkg : pkgList) {
+    public MailPackage getPendingPackageById(UUID packageId) {
+        for (MailPackage pkg : pendingPackages) {
             if (pkg.getId().equals(packageId)) return pkg;
         }
         return null;
     }
 
-    public void removePackageById(MailPackage mailPackage) {
-        pkgList.remove(mailPackage);
+    public void save(MailPackage pkg) throws SQLException {
+        pendingPackages.remove(pkg);
+        pkg.save();
+    }
+
+    public void open(MailPackage mailPackage, Player player) {
+        pendingPackages.add(mailPackage);
+        mailPackage.open(player);
     }
 }

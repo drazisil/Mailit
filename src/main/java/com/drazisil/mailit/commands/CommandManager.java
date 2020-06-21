@@ -28,11 +28,11 @@ public class CommandManager {
         PluginCommand cmdSend = plugin.getCommand("send");
         if (cmdSend != null) cmdSend.setExecutor(new CommandSend());
 
+//        PluginCommand cmdMailList = plugin.getCommand("mail list");
+//        if (cmdMailList != null) cmdMailList.setExecutor(new CommandMailList());
+
         PluginCommand cmdMail = plugin.getCommand("mail");
         if (cmdMail != null) cmdMail.setExecutor(new CommandMail());
-
-        PluginCommand cmdMailList = plugin.getCommand("mail.list");
-        if (cmdMailList != null) cmdMailList.setExecutor(new CommandMailList());
 
         PluginCommand cmdOpen = plugin.getCommand("open");
         if (cmdOpen != null) cmdOpen.setExecutor(new CommandOpen());

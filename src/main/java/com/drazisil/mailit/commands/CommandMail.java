@@ -51,8 +51,28 @@ public class CommandMail implements CommandExecutor {
             throwables.printStackTrace();
         }
 
+        if (pkgs == null || pkgs.size() == 0) {
+            player.sendMessage("You have no packages in your mailbox.");
+            return true;
+        }
+
         player.sendMessage(format("You have %d packages in your mailbox.",
                 pkgs.size()));
+
+        // TODO: Handle this cleaner
+        if (args.length == 1 && args[0].equals("list")) {
+            player.sendMessage("Listing packages...");
+
+            int pkgIdx = 0;
+            for (MailPackage pkg : pkgs) {
+                player.sendMessage(format("   %d: from %s",
+                        pkgIdx,
+                        pkg.getFrom().getName()));
+                pkgIdx++;
+            }
+
+            player.sendMessage("\nType /open <package number> to view one.");
+        }
 
         return true;
     }

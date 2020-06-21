@@ -27,6 +27,9 @@ import java.util.ArrayList;
 public class ItemStackUtil {
     public static ItemStack[] deserialize(String serialisedString) {
 
+        // Remove end caps
+        serialisedString = serialisedString.substring(1, serialisedString.length() - 1);
+
         String[] parts = serialisedString.split(", ");
 
         ArrayList<String> partsArr = Lists.newArrayList(parts);
@@ -37,7 +40,7 @@ public class ItemStackUtil {
             items.add(parseItemStackString(item));
         }
 
-        return (ItemStack[]) items.toArray();
+        return items.toArray(new ItemStack[0]);
 
 
     }
@@ -48,8 +51,15 @@ public class ItemStackUtil {
 
         String[] parts = item.split(" x ");
 
-        Material material = Material.valueOf(parts[0]);
-        int count = Integer.parseInt(parts[1]);
+        String m = parts[0].substring(10);
+        String c = parts[1].substring(0, parts[1].length() - 1);
+
+        Material material = Material.valueOf(m);
+
+        // TODO: Handle metadata
+        // ItemStack{FILLED_MAP x 1, MAP_META:{meta-type=MAP, map-id=21}}
+
+        int count = Integer.parseInt(c);
 
         return new ItemStack(material, count);
     }

@@ -6,8 +6,12 @@ Any versions tagged `-SNAPSHOT` are development versions that may not be feature
 
 ### Planned Features:
 
-* Send items between players
-* Notify players of new mail when they join
+* ~~Send items between players~~ - Done
+* Handle Metadata
+* Ability to delete unopened mail
+* Corrupted mail should not cause crash
+* ~~Notify players of new mail when they join~~ - Done
+* Ping a player when new mail for them arives
 * Allow server staff to access player mailboxes for security and abuse reasons
 
 Any additional feature requests, please submit them at the [support link](https://github.com/drazisil/Mailit/issues) and I will see what I can do.

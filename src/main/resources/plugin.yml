@@ -10,8 +10,8 @@ commands:
     description: "Check your mail."
     usage: "/<command>"
     permission: mailit.mailbox
-  mail.list:
-    description: "List your received packaged."
+  mail list:
+    description: "List your received packages."
     usage: "/<command>"
     permission: mailit.mailbox
   open:

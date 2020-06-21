@@ -18,11 +18,15 @@
 
 package com.drazisil.mailit.commands;
 
+import com.drazisil.mailit.MailPackage;
+import com.drazisil.mailit.MailboxManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.sql.SQLException;
 
 import static com.drazisil.mailit.Mailit.logger;
 import static com.drazisil.mailit.Mailit.plugin;
@@ -55,9 +59,14 @@ public class CommandSend implements CommandExecutor {
 
         logger.info(format("%s used the send command for %s", sender.getName(), receivingPlayerName));
 
-        plugin.getMailboxManager()
-                .newPackage(sendingPlayer, receivingPlayer)
-                .open(sendingPlayer);
+        try {
+            MailboxManager mailboxManager = plugin.getMailboxManager();
+
+            MailPackage mailPackage = mailboxManager.newPackage(sendingPlayer, receivingPlayer);
+            mailboxManager.open(mailPackage, sendingPlayer);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         return true;
     }
 

@@ -21,6 +21,7 @@ package com.drazisil.mailit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
@@ -36,6 +37,7 @@ public class MailPackage implements InventoryHolder {
 
     private final Player from;
     private final Player to;
+    private final int packageSize = 27;
     private Inventory contents = null;
     private final UUID id;
     private boolean isOpen = false;
@@ -46,13 +48,13 @@ public class MailPackage implements InventoryHolder {
         this.to = playerTo;
         this.contents = createInventory(
                 this,
-                27,
+                packageSize,
                 format("Package from %s to %s",
                         from.getName(),
                         to.getName()));
     }
 
-    public MailPackage(String id, String fromName, String toName, String contents) {
+    public MailPackage(String id, String fromName, String toName, String contents) throws SQLException {
         this.id = UUID.fromString(id);
 
         Player from = PlayerUtil.getPlayerByName(fromName);
@@ -65,8 +67,16 @@ public class MailPackage implements InventoryHolder {
                 fromName));
         this.to = to;
 
-        this.contents.setStorageContents(ItemStackUtil.deserialize(contents));
+        ItemStack[] items = ItemStackUtil.deserialize(contents);
 
+        this.contents = createInventory(
+                this,
+                packageSize,
+                format("Package from %s to %s",
+                        from.getName(),
+                        to.getName()));
+
+        this.contents.setStorageContents(items);
     }
 
     public Player getFrom() {
@@ -100,7 +110,7 @@ public class MailPackage implements InventoryHolder {
         isOpen = open;
     }
 
-    public MailPackage close() {
+    public MailPackage close() throws SQLException {
 
         save();
 
@@ -108,7 +118,7 @@ public class MailPackage implements InventoryHolder {
         return this;
     }
 
-    private void save() {
+    public void save() throws SQLException {
 
         if (isEmpty()) {
             delete();
@@ -123,7 +133,7 @@ public class MailPackage implements InventoryHolder {
         }
     }
 
-    private void delete() {
+    private void delete() throws SQLException {
         plugin.getMailboxManager().removePackageById(this);
         try {
             plugin.getDatabaseManager().delete(this);

@@ -54,18 +54,30 @@ public class CommandOpen implements CommandExecutor {
             throwables.printStackTrace();
         }
 
+        if (pkgs == null) {
+            player.sendMessage("You don't have any packages. It may still be in transit.");
+            return true;
+        }
+
+        // Player entered an invalid index
+        if (packageIdx >= pkgs.size()) {
+            player.sendMessage("I'm sorry, we can't find a package with that id! Can you check the number again?");
+            return true;
+        }
+
         MailPackage mailPackage = pkgs.get(packageIdx);
 
+        // Unable to locate package
         if (mailPackage == null) {
             player.sendMessage("I'm sorry, we can't find a package with that id! Can you check the number again?");
             return true;
         }
 
-        sender.sendMessage(format("Package %d is from %s",
+        player.sendMessage(format("Package %d is from %s",
                 packageIdx,
                 mailPackage.getFrom().getName()));
 
-        mailPackage.open(player);
+        plugin.getMailboxManager().open(mailPackage, player);
 
         return true;
     }

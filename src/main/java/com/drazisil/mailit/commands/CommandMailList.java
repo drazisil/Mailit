@@ -51,16 +51,19 @@ public class CommandMailList implements CommandExecutor {
             throwables.printStackTrace();
         }
 
+        if (pkgs == null) {
+            player.sendMessage("You have no packages in your mailbox.");
+            return true;
+        }
+
         player.sendMessage(format("You have %d packages in your mailbox.",
                 pkgs.size()));
-
-        if (pkgs.size() == 0) return true;
 
         player.sendMessage("Listing packages...");
 
         int pkgIdx = 0;
         for (MailPackage pkg : pkgs) {
-            player.sendMessage(format("\t%d: from %s",
+            player.sendMessage(format("   %d: from %s",
                     pkgIdx,
                     pkg.getFrom().getName()));
             pkgIdx++;

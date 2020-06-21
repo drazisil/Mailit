@@ -21,6 +21,7 @@ package com.drazisil.mailit;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.UUID;
 
 import static com.drazisil.mailit.Mailit.logger;
 import static com.drazisil.mailit.Mailit.plugin;
@@ -75,7 +76,7 @@ public class DatabaseManager {
     }
 
     public ArrayList<MailPackage> retrieveByReceiver(String name) throws SQLException {
-        String stm = format("select \"id\", \"from\", \"to\", \"contents\" where \"to\" = '%s'",
+        String stm = format("select \"id\", \"from\", \"to\", \"contents\" from packages where \"to\" = '%s'",
                 name);
 
         Statement st = conn.createStatement();
@@ -98,5 +99,30 @@ public class DatabaseManager {
             throwables.printStackTrace();
         }
         return packages;
+    }
+
+    public MailPackage retrieveById(UUID packageId) throws SQLException {
+        String stm = format("select \"id\", \"from\", \"to\", \"contents\" from packages where \"id\" = '%s'",
+                packageId.toString());
+
+        Statement st = conn.createStatement();
+
+        MailPackage mailPackage = null;
+
+        ResultSet rs;
+        try {
+            rs = st.executeQuery(stm);
+            if (!rs.next()) return null;
+
+            mailPackage = new MailPackage(
+                    rs.getString("id"),
+                    rs.getString("from"),
+                    rs.getString("to"),
+                    rs.getString("contents"));
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return mailPackage;
     }
 }

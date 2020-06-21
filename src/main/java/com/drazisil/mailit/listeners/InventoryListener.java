@@ -23,6 +23,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 import static com.drazisil.mailit.Mailit.logger;
@@ -32,7 +33,7 @@ import static java.lang.String.format;
 public class InventoryListener implements Listener {
 
     @EventHandler
-    public void onInventoryCloseEvent(InventoryCloseEvent event) {
+    public void onInventoryCloseEvent(InventoryCloseEvent event) throws SQLException {
 
         if (!(event.getInventory().getHolder() instanceof MailPackage)) return;
 
@@ -41,14 +42,13 @@ public class InventoryListener implements Listener {
         UUID packageId = inventoryHolder.getId();
 
         MailPackage mailPackage = plugin.getMailboxManager()
-                .getPackageById(packageId);
+                .getPendingPackageById(packageId);
 
         if (mailPackage == null) {
-            logger.warning(format("We received a close event for a package with id %s, but no such package exists!", packageId));
+            logger.severe(format("We received a close event for a package with id %s, but no such package exists!", packageId));
             return;
         }
-        mailPackage.close()
-                .getFrom()
-                .sendMessage("S: " + mailPackage.toString());
+        mailPackage.close();
+
     }
 }
