@@ -24,13 +24,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.sql.SQLException;
+
 import static com.drazisil.mailit.Mailit.plugin;
 import static java.lang.String.format;
 
 public class PlayerListener implements Listener {
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) throws SQLException {
         Player player = event.getPlayer();
 
         // Get the mailbox for the player.

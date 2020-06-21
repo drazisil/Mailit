@@ -18,34 +18,39 @@
 
 package com.drazisil.mailit;
 
+import com.google.common.collect.Lists;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import static com.drazisil.mailit.Mailit.logger;
+import java.util.ArrayList;
 
 public class ItemStackUtil {
-    public static String serializeFromSet(ItemStack[] storageContents) {
+    public static ItemStack[] deserialize(String serialisedString) {
 
-        StringBuilder serializedSet = new StringBuilder();
+        String[] parts = serialisedString.split(", ");
 
-        for (ItemStack itemStack : storageContents) {
-            if (itemStack == null) {
-                serializedSet.append("null");
-                break;
-            }
+        ArrayList<String> partsArr = Lists.newArrayList(parts);
 
-            StringBuilder toString = new StringBuilder("ItemStack{").append(itemStack.getType().name()).append(" x ").append(itemStack.getAmount());
-            if (itemStack.hasItemMeta()) {
-                toString.append(", ").append(itemStack.getItemMeta());
-            }
-            serializedSet.append(toString.append('}').toString());
+        ArrayList<ItemStack> items = new ArrayList<>();
 
+        for (String item : partsArr) {
+            items.add(parseItemStackString(item));
         }
 
-        // TODO: This returns null :(
-
-        logger.warning(serializedSet.toString());
-        return serializedSet.toString();
+        return (ItemStack[]) items.toArray();
 
 
+    }
+
+    private static ItemStack parseItemStackString(String item) {
+
+        if (item.equals("null")) return null;
+
+        String[] parts = item.split(" x ");
+
+        Material material = Material.valueOf(parts[0]);
+        int count = Integer.parseInt(parts[1]);
+
+        return new ItemStack(material, count);
     }
 }

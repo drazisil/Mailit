@@ -52,22 +52,22 @@ public class MailPackage implements InventoryHolder {
                         to.getName()));
     }
 
-//    public MailPackage(String id, String fromName, String toName, String contents) {
-//        this.id = UUID.fromString(id);
-//
-//        Player from = PlayerUtil.getPlayerByName(fromName);
-//        if (from == null) logger.severe(format("No player found with the name %s",
-//                fromName));
-//        this.from = from;
-//
-//        Player to = PlayerUtil.getPlayerByName(toName);
-//        if (to == null) logger.severe(format("No player found with the name %s",
-//                fromName));
-//        this.to = to;
-//
-//        this.contents.setStorageContents(contents);
-//
-//    }
+    public MailPackage(String id, String fromName, String toName, String contents) {
+        this.id = UUID.fromString(id);
+
+        Player from = PlayerUtil.getPlayerByName(fromName);
+        if (from == null) logger.severe(format("No player found with the name %s",
+                fromName));
+        this.from = from;
+
+        Player to = PlayerUtil.getPlayerByName(toName);
+        if (to == null) logger.severe(format("No player found with the name %s",
+                fromName));
+        this.to = to;
+
+        this.contents.setStorageContents(ItemStackUtil.deserialize(contents));
+
+    }
 
     public Player getFrom() {
         return from;
@@ -159,10 +159,6 @@ public class MailPackage implements InventoryHolder {
             this.pkgId = String.valueOf(pkg.id);
             this.fromPlayerName = pkg.from.getName();
             this.toPlayerName = pkg.to.getName();
-
-            System.out.println(format("Inventory has %d items.", pkg.contents.getSize()));
-
-            String contentsTmp = ItemStackUtil.serializeFromSet(pkg.contents.getStorageContents());
 
             this.contents = Arrays.toString(pkg.contents.getStorageContents());
         }

@@ -18,9 +18,8 @@
 
 package com.drazisil.mailit;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.drazisil.mailit.Mailit.logger;
@@ -50,7 +49,6 @@ public class DatabaseManager {
 
     public void createTables() throws SQLException {
         String stm = "CREATE table if not exists packages (\"id\" text unique , \"from\" text, \"to\" text, \"contents\" text)";
-        logger.warning(stm);
 
         conn.createStatement()
                 .executeUpdate(stm);
@@ -63,7 +61,6 @@ public class DatabaseManager {
                 mailPackage.getTo().getName(),
                 Arrays.toString(mailPackage.getInventory().getStorageContents()),
                 Arrays.toString(mailPackage.getInventory().getStorageContents()));
-        logger.warning(stm);
 
         conn.createStatement()
                 .executeUpdate(stm);
@@ -72,36 +69,34 @@ public class DatabaseManager {
     public void delete(MailPackage mailPackage) throws SQLException {
         String stm = format("delete from packages where id='%s'",
                 mailPackage.getId());
-        logger.warning(stm);
 
         conn.createStatement()
                 .executeUpdate(stm);
     }
 
-//    public ArrayList<MailPackage> retrieveByReceiver(String name) throws SQLException {
-//        String stm = format("select \"id\", \"from\", \"to\", \"contents\" where \"to\" = '%s'",
-//                name);
-//        logger.warning(stm);
-//
-//        Statement st =  conn.createStatement();
-//
-//        ArrayList<MailPackage> packages = new ArrayList<>();
-//
-//        ResultSet rs = null;
-//        try {
-//            rs = st.executeQuery(stm);
-//            while (rs.next()) {
-//
-//                packages.add(new MailPackage(
-//                        rs.getString("id"),
-//                        rs.getString("from"),
-//                        rs.getString("to"),
-//                        rs.getString("contents")));
-//
-//            }
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//        return packages;
-//    }
+    public ArrayList<MailPackage> retrieveByReceiver(String name) throws SQLException {
+        String stm = format("select \"id\", \"from\", \"to\", \"contents\" where \"to\" = '%s'",
+                name);
+
+        Statement st = conn.createStatement();
+
+        ArrayList<MailPackage> packages = new ArrayList<>();
+
+        ResultSet rs;
+        try {
+            rs = st.executeQuery(stm);
+            while (rs.next()) {
+
+                packages.add(new MailPackage(
+                        rs.getString("id"),
+                        rs.getString("from"),
+                        rs.getString("to"),
+                        rs.getString("contents")));
+
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return packages;
+    }
 }

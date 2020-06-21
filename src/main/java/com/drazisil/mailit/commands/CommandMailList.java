@@ -25,6 +25,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import static com.drazisil.mailit.Mailit.plugin;
@@ -42,8 +43,13 @@ public class CommandMailList implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        ArrayList<MailPackage> pkgs = plugin.getMailboxManager()
-                .getPackagesByReceiver(player);
+        ArrayList<MailPackage> pkgs = null;
+        try {
+            pkgs = plugin.getMailboxManager()
+                    .getPackagesByReceiver(player);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
         player.sendMessage(format("You have %d packages in your mailbox.",
                 pkgs.size()));
