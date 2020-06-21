@@ -18,9 +18,11 @@
 
 package com.drazisil.mailit;
 
+import com.drazisil.mailit.database.DatabaseManager;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.sql.SQLException;
 import java.util.logging.Logger;
 
 public final class Mailit extends JavaPlugin {
@@ -29,6 +31,7 @@ public final class Mailit extends JavaPlugin {
     public static Logger logger;
 
     private MailboxManager mailboxManager;
+    private DatabaseManager databaseManager;
 
     @Override
     public void onEnable() {
@@ -37,6 +40,7 @@ public final class Mailit extends JavaPlugin {
         plugin = this;
         logger = plugin.getLogger();
         mailboxManager = new MailboxManager();
+        databaseManager = new DatabaseManager();
 
         plugin.getServer().getPluginManager().registerEvents(new PlayerListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new InventoryListener(), plugin);
@@ -46,6 +50,19 @@ public final class Mailit extends JavaPlugin {
 
         PluginCommand cmdMail = plugin.getCommand("mail");
         if (cmdMail != null) cmdMail.setExecutor(new CommandMail());
+
+        plugin.saveDefaultConfig();
+
+        try {
+            databaseManager.connect();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        try {
+            databaseManager.createTables();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
     }
 

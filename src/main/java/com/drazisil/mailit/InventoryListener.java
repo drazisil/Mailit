@@ -31,6 +31,7 @@ public class InventoryListener implements Listener {
 
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent event) {
+
         if (!(event.getInventory().getHolder() instanceof MailPackage)) return;
 
         MailPackage inventoryHolder = (MailPackage) event.getInventory().getHolder();
@@ -46,5 +47,6 @@ public class InventoryListener implements Listener {
             return;
         }
         mailPackage.close();
+        mailPackage.getFrom().sendMessage("S: " + mailPackage.toString());
     }
 }

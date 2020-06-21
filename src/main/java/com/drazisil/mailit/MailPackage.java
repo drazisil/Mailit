@@ -23,6 +23,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static org.bukkit.Bukkit.createInventory;
@@ -42,7 +44,7 @@ public class MailPackage implements InventoryHolder {
         this.from = playerFrom;
         this.to = playerTo;
         this.contents = createInventory(
-                null,
+                this,
                 mailboxSize,
                 String.format("Package from %s to %s", from.getName(), to.getName()));
     }
@@ -80,5 +82,33 @@ public class MailPackage implements InventoryHolder {
 
     public void close() {
         setOpen(false);
+    }
+
+    public SerializedPackage serialize() {
+        return new SerializedPackage(this);
+    }
+
+    public String toString() {
+        SerializedPackage s = new SerializedPackage(this);
+        return String.format("%s|%s|%s|%s", s.pkgId, s.fromPlayerName, s.toPlayerName, s.contents);
+    }
+
+    private static class SerializedPackage {
+        public String pkgId;
+        public String fromPlayerName;
+        public String toPlayerName;
+        public String contents;
+
+        public SerializedPackage(MailPackage pkg) {
+            this.pkgId = String.valueOf(pkg.id);
+            this.fromPlayerName = pkg.from.getName();
+            this.toPlayerName = pkg.to.getName();
+
+            ArrayList<String> items = new ArrayList<>();
+
+            System.out.println(String.format("Inventory has %d items.", pkg.contents.getSize()));
+
+            this.contents = Arrays.toString(pkg.contents.getStorageContents());
+        }
     }
 }
