@@ -10,6 +10,14 @@ commands:
     description: "Check your mail."
     usage: "/<command>"
     permission: mailit.mailbox
+  mail.list:
+    description: "List your received packaged."
+    usage: "/<command>"
+    permission: mailit.mailbox
+  open:
+    description: "Open a package."
+    usage: "/<command> <package number>"
+    permission: mailit.mailbox
   send:
     description: "Send a new package."
     usage: "/<command> send <player's name>"

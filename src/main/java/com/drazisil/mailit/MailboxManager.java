@@ -29,21 +29,10 @@ public class MailboxManager {
     //    private final ArrayList<PlayerMailbox> mailboxes = new ArrayList<>();
     private final ArrayList<MailPackage> pkgList = new ArrayList<>();
 
-    public ArrayList<MailPackage> getPackagesBySender(Player player) {
-        ArrayList<MailPackage> playerPackages = new ArrayList<>();
-
-        for (MailPackage pkg : pkgList) {
-            if (pkg.getFrom() == player) playerPackages.add(pkg);
-        }
-        return playerPackages;
-    }
-
-    public int getPackageCountBySender(Player player) {
-        ArrayList<MailPackage> playerPackages = getPackagesBySender(player);
-        return playerPackages.size();
-    }
-
     public ArrayList<MailPackage> getPackagesByReceiver(Player player) {
+
+//        MailPackage.SerializedPackage[] playerPackagesRaw = plugin.getDatabaseManager().retrieveByReceiver(player.getName());
+
         ArrayList<MailPackage> playerPackages = new ArrayList<>();
 
         for (MailPackage pkg : pkgList) {
@@ -69,5 +58,9 @@ public class MailboxManager {
             if (pkg.getId().equals(packageId)) return pkg;
         }
         return null;
+    }
+
+    public void removePackageById(MailPackage mailPackage) {
+        pkgList.remove(mailPackage);
     }
 }

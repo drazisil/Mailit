@@ -18,20 +18,20 @@
 
 package com.drazisil.mailit;
 
-import com.drazisil.mailit.database.DatabaseManager;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.sql.SQLException;
 import java.util.logging.Logger;
+
+import static com.drazisil.mailit.commands.CommandManager.registerCommands;
+import static com.drazisil.mailit.listeners.EventManager.registerEventListeners;
 
 public final class Mailit extends JavaPlugin {
 
     public static Mailit plugin;
     public static Logger logger;
 
-    private MailboxManager mailboxManager;
     private DatabaseManager databaseManager;
+    private MailboxManager mailboxManager;
 
     @Override
     public void onEnable() {
@@ -42,33 +42,22 @@ public final class Mailit extends JavaPlugin {
         mailboxManager = new MailboxManager();
         databaseManager = new DatabaseManager();
 
-        plugin.getServer().getPluginManager().registerEvents(new PlayerListener(), plugin);
-        plugin.getServer().getPluginManager().registerEvents(new InventoryListener(), plugin);
+        registerEventListeners();
 
-        PluginCommand cmdSend = plugin.getCommand("send");
-        if (cmdSend != null) cmdSend.setExecutor(new CommandSend());
-
-        PluginCommand cmdMail = plugin.getCommand("mail");
-        if (cmdMail != null) cmdMail.setExecutor(new CommandMail());
+        registerCommands();
 
         plugin.saveDefaultConfig();
 
-        try {
-            databaseManager.connect();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        try {
-            databaseManager.createTables();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
+        databaseManager.connect();
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+    }
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
     }
 
     public MailboxManager getMailboxManager() {

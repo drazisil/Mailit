@@ -16,27 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.drazisil.mailit;
+package com.drazisil.mailit.commands;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.command.PluginCommand;
 
 import static com.drazisil.mailit.Mailit.plugin;
 
-public class PlayerListener implements Listener {
+public class CommandManager {
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
+    public static void registerCommands() {
+        PluginCommand cmdSend = plugin.getCommand("send");
+        if (cmdSend != null) cmdSend.setExecutor(new CommandSend());
 
-        // Get the mailbox for the player.
-        MailboxManager mailboxManager = plugin.getMailboxManager();
+        PluginCommand cmdMail = plugin.getCommand("mail");
+        if (cmdMail != null) cmdMail.setExecutor(new CommandMail());
 
-        int pkgCount = mailboxManager.getPackageCountByReceiver(player);
+        PluginCommand cmdMailList = plugin.getCommand("mail.list");
+        if (cmdMailList != null) cmdMailList.setExecutor(new CommandMailList());
 
-        player.sendMessage(String.format("You have %d packages in your mailbox.", pkgCount));
-
+        PluginCommand cmdOpen = plugin.getCommand("open");
+        if (cmdOpen != null) cmdOpen.setExecutor(new CommandOpen());
     }
 }

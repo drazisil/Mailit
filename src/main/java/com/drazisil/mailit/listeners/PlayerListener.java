@@ -16,37 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.drazisil.mailit;
+package com.drazisil.mailit.listeners;
 
+import com.drazisil.mailit.MailboxManager;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.util.UUID;
-
-import static com.drazisil.mailit.Mailit.logger;
 import static com.drazisil.mailit.Mailit.plugin;
+import static java.lang.String.format;
 
-public class InventoryListener implements Listener {
+public class PlayerListener implements Listener {
 
     @EventHandler
-    public void onInventoryCloseEvent(InventoryCloseEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
 
-        if (!(event.getInventory().getHolder() instanceof MailPackage)) return;
-
-        MailPackage inventoryHolder = (MailPackage) event.getInventory().getHolder();
-
-        UUID packageId = inventoryHolder.getId();
-
+        // Get the mailbox for the player.
         MailboxManager mailboxManager = plugin.getMailboxManager();
 
-        MailPackage mailPackage = mailboxManager.getPackageById(packageId);
+        int pkgCount = mailboxManager.getPackageCountByReceiver(player);
 
-        if (mailPackage == null) {
-            logger.warning(String.format("We received a close event for a package with id %s, but no such package exists!", packageId));
-            return;
-        }
-        mailPackage.close();
-        mailPackage.getFrom().sendMessage("S: " + mailPackage.toString());
+        player.sendMessage(format("You have %d packages in your mailbox.", pkgCount));
+
     }
 }

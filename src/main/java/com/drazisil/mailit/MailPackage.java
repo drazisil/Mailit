@@ -23,19 +23,20 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.UUID;
 
+import static com.drazisil.mailit.Mailit.logger;
+import static com.drazisil.mailit.Mailit.plugin;
+import static java.lang.String.format;
 import static org.bukkit.Bukkit.createInventory;
 
 public class MailPackage implements InventoryHolder {
 
     private final Player from;
     private final Player to;
-    private final Inventory contents;
-    private final int mailboxSize = 27;
-    private final int lastSlotIndex = mailboxSize - 1;
+    private Inventory contents = null;
     private final UUID id;
     private boolean isOpen = false;
 
@@ -45,9 +46,28 @@ public class MailPackage implements InventoryHolder {
         this.to = playerTo;
         this.contents = createInventory(
                 this,
-                mailboxSize,
-                String.format("Package from %s to %s", from.getName(), to.getName()));
+                27,
+                format("Package from %s to %s",
+                        from.getName(),
+                        to.getName()));
     }
+
+//    public MailPackage(String id, String fromName, String toName, String contents) {
+//        this.id = UUID.fromString(id);
+//
+//        Player from = PlayerUtil.getPlayerByName(fromName);
+//        if (from == null) logger.severe(format("No player found with the name %s",
+//                fromName));
+//        this.from = from;
+//
+//        Player to = PlayerUtil.getPlayerByName(toName);
+//        if (to == null) logger.severe(format("No player found with the name %s",
+//                fromName));
+//        this.to = to;
+//
+//        this.contents.setStorageContents(contents);
+//
+//    }
 
     public Player getFrom() {
         return from;
@@ -80,35 +100,79 @@ public class MailPackage implements InventoryHolder {
         isOpen = open;
     }
 
-    public void close() {
+    public MailPackage close() {
+
+        save();
+
         setOpen(false);
+        return this;
     }
 
-    public SerializedPackage serialize() {
-        return new SerializedPackage(this);
+    private void save() {
+
+        if (isEmpty()) {
+            delete();
+            return;
+        }
+
+        try {
+            plugin.getDatabaseManager().update(this);
+            logger.info(format("Package with id %s was saved.", getId()));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+    private void delete() {
+        plugin.getMailboxManager().removePackageById(this);
+        try {
+            plugin.getDatabaseManager().delete(this);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        logger.info(format("Package with id %s was deleted.", getId()));
+    }
+
+    private boolean isEmpty() {
+
+        for (int i = 0; i < contents.getSize(); i++) {
+            if (!(contents.getItem(i) == null)) return false;
+        }
+        return true;
+    }
+
+    public String serialize() {
+        return new SerializedPackage(this).toString();
     }
 
     public String toString() {
-        SerializedPackage s = new SerializedPackage(this);
-        return String.format("%s|%s|%s|%s", s.pkgId, s.fromPlayerName, s.toPlayerName, s.contents);
+        return serialize();
     }
 
-    private static class SerializedPackage {
-        public String pkgId;
-        public String fromPlayerName;
-        public String toPlayerName;
-        public String contents;
+    public static class SerializedPackage {
+        public final String pkgId;
+        public final String fromPlayerName;
+        public final String toPlayerName;
+        public final String contents;
 
         public SerializedPackage(MailPackage pkg) {
             this.pkgId = String.valueOf(pkg.id);
             this.fromPlayerName = pkg.from.getName();
             this.toPlayerName = pkg.to.getName();
 
-            ArrayList<String> items = new ArrayList<>();
+            System.out.println(format("Inventory has %d items.", pkg.contents.getSize()));
 
-            System.out.println(String.format("Inventory has %d items.", pkg.contents.getSize()));
+            String contentsTmp = ItemStackUtil.serializeFromSet(pkg.contents.getStorageContents());
 
             this.contents = Arrays.toString(pkg.contents.getStorageContents());
+        }
+
+        public String toString() {
+            return format("%s|%s|%s|%s",
+                    this.pkgId,
+                    this.fromPlayerName,
+                    this.toPlayerName,
+                    this.contents);
         }
     }
 }

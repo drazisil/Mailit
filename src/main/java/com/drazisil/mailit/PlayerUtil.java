@@ -18,32 +18,18 @@
 
 package com.drazisil.mailit;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import static com.drazisil.mailit.Mailit.plugin;
 
-public class CommandMail implements CommandExecutor {
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+public class PlayerUtil {
 
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("This command can only be ran as a player.");
-            return true;
-        }
+    public static boolean isPlayer(CommandSender sender) {
+        return sender instanceof Player;
+    }
 
-        Player sendingPlayer = (Player) sender;
-
-        // Get the mailbox for the player.
-        MailboxManager mailboxManager = plugin.getMailboxManager();
-
-        int pkgCount = mailboxManager.getPackageCountBySender(sendingPlayer);
-
-        sendingPlayer.sendMessage(String.format("You have %d packages in your mailbox.", pkgCount));
-
-        return true;
+    public static Player getPlayerByName(String playerName) {
+        return plugin.getServer().getPlayer(playerName);
     }
 }

@@ -16,49 +16,53 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.drazisil.mailit;
+package com.drazisil.mailit.commands;
 
+import com.drazisil.mailit.MailPackage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import static com.drazisil.mailit.Mailit.logger;
+import java.util.ArrayList;
+
 import static com.drazisil.mailit.Mailit.plugin;
+import static com.drazisil.mailit.PlayerUtil.isPlayer;
+import static java.lang.String.format;
 
-public class CommandSend implements CommandExecutor {
+public class CommandMailList implements CommandExecutor {
     @Override
-    public boolean onCommand(@NotNull CommandSender sender,
-                             @NotNull Command command,
-                             @NotNull String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
-        if (!(sender instanceof Player)) {
+        if (!isPlayer(sender)) {
             sender.sendMessage("This command can only be ran as a player.");
             return true;
         }
 
-        Player sendingPlayer = (Player) sender;
+        Player player = (Player) sender;
 
-        if (args.length != 1) return false;
+        ArrayList<MailPackage> pkgs = plugin.getMailboxManager()
+                .getPackagesByReceiver(player);
 
-        // Check if the argument is a player
-        String receivingPlayerName = args[0];
-        Player receivingPlayer = sender.getServer().getPlayer(receivingPlayerName);
-        if (receivingPlayer == null) {
-            sender.sendMessage("Unable to locate that player, please check the spelling.");
-            return true;
+        player.sendMessage(format("You have %d packages in your mailbox.",
+                pkgs.size()));
+
+        if (pkgs.size() == 0) return true;
+
+        player.sendMessage("Listing packages...");
+
+        int pkgIdx = 0;
+        for (MailPackage pkg : pkgs) {
+            player.sendMessage(format("\t%d: from %s",
+                    pkgIdx,
+                    pkg.getFrom().getName()));
+            pkgIdx++;
         }
 
-        logger.info(String.format("%s used the send command for %s", sender.getName(), receivingPlayerName));
-
-        // Get the mailbox for the player.
-        MailboxManager mailboxManager = plugin.getMailboxManager();
-
-        MailPackage newPackage = mailboxManager.newPackage(sendingPlayer, receivingPlayer);
-
-        newPackage.open(sendingPlayer);
+        player.sendMessage("\nType /open <package number> to view one.");
 
         return true;
+
     }
 }
