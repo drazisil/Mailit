@@ -17,6 +17,7 @@ Any versions tagged `-SNAPSHOT` are development versions that may not be feature
 * Corrupted mail should not cause crash
 * Ping a player when new mail for them arives
 * Allow server staff to access player mailboxes for security and abuse reasons
+* Add localization
 
 Any additional feature requests, please submit them at the [support link](https://github.com/drazisil/Mailit/issues) and I will see what I can do.
 
