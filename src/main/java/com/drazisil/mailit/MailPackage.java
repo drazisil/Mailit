@@ -103,7 +103,7 @@ public class MailPackage implements InventoryHolder {
             return;
         }
         setOpen(true);
-        from.openInventory(getInventory());
+        player.openInventory(getInventory());
     }
 
     public void setOpen(boolean open) {
