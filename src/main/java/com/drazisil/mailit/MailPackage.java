@@ -18,6 +18,7 @@
 
 package com.drazisil.mailit;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -30,19 +31,20 @@ import java.util.UUID;
 
 import static com.drazisil.mailit.Mailit.logger;
 import static com.drazisil.mailit.Mailit.plugin;
+import static com.drazisil.mailit.PlayerUtil.getOfflinePlayerByName;
 import static java.lang.String.format;
 import static org.bukkit.Bukkit.createInventory;
 
 public class MailPackage implements InventoryHolder {
 
-    private final Player from;
-    private final Player to;
+    private final OfflinePlayer from;
+    private final OfflinePlayer to;
     private final int packageSize = 27;
-    private Inventory contents = null;
+    private final Inventory contents;
     private final UUID id;
     private boolean isOpen = false;
 
-    public MailPackage(Player playerFrom, Player playerTo) {
+    public MailPackage(@NotNull Player playerFrom, @NotNull Player playerTo) {
         this.id = UUID.randomUUID();
         this.from = playerFrom;
         this.to = playerTo;
@@ -54,15 +56,15 @@ public class MailPackage implements InventoryHolder {
                         to.getName()));
     }
 
-    public MailPackage(String id, String fromName, String toName, String contents) throws SQLException {
+    public MailPackage(String id, String fromName, String toName, String contents) {
         this.id = UUID.fromString(id);
 
-        Player from = PlayerUtil.getPlayerByName(fromName);
+        OfflinePlayer from = getOfflinePlayerByName(fromName);
         if (from == null) logger.severe(format("No player found with the name %s",
                 fromName));
         this.from = from;
 
-        Player to = PlayerUtil.getPlayerByName(toName);
+        OfflinePlayer to = getOfflinePlayerByName(toName);
         if (to == null) logger.severe(format("No player found with the name %s",
                 fromName));
         this.to = to;
@@ -79,11 +81,11 @@ public class MailPackage implements InventoryHolder {
         this.contents.setStorageContents(items);
     }
 
-    public Player getFrom() {
+    public OfflinePlayer getFrom() {
         return from;
     }
 
-    public Player getTo() {
+    public OfflinePlayer getTo() {
         return to;
     }
 
@@ -110,12 +112,11 @@ public class MailPackage implements InventoryHolder {
         isOpen = open;
     }
 
-    public MailPackage close() throws SQLException {
+    public void close() throws SQLException {
 
         save();
 
         setOpen(false);
-        return this;
     }
 
     public void save() throws SQLException {

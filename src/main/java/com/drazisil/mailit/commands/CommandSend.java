@@ -26,8 +26,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
-
 import static com.drazisil.mailit.Mailit.logger;
 import static com.drazisil.mailit.Mailit.plugin;
 import static com.drazisil.mailit.PlayerUtil.getPlayerByName;
@@ -59,14 +57,10 @@ public class CommandSend implements CommandExecutor {
 
         logger.info(format("%s used the send command for %s", sender.getName(), receivingPlayerName));
 
-        try {
-            MailboxManager mailboxManager = plugin.getMailboxManager();
+        MailboxManager mailboxManager = plugin.getMailboxManager();
 
-            MailPackage mailPackage = mailboxManager.newPackage(sendingPlayer, receivingPlayer);
-            mailboxManager.open(mailPackage, sendingPlayer);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
+        MailPackage mailPackage = mailboxManager.newPackage(sendingPlayer, receivingPlayer);
+        mailboxManager.open(mailPackage, sendingPlayer);
         return true;
     }
 

@@ -41,11 +41,9 @@ public class MailboxManager {
         return playerPackages.size();
     }
 
-    public MailPackage newPackage(Player sendingPlayer, Player receivingPlayer) throws SQLException {
+    public MailPackage newPackage(Player sendingPlayer, Player receivingPlayer) {
 
-        MailPackage mailPackage = new MailPackage(sendingPlayer, receivingPlayer);
-
-        return mailPackage;
+        return new MailPackage(sendingPlayer, receivingPlayer);
 
     }
 

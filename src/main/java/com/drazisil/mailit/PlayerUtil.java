@@ -18,18 +18,48 @@
 
 package com.drazisil.mailit;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 import static com.drazisil.mailit.Mailit.plugin;
 
 public class PlayerUtil {
 
+    public static boolean isOfflinePlayer(CommandSender sender) {
+
+        @NotNull OfflinePlayer[] offlinePlayers = plugin.getServer().getOfflinePlayers();
+
+        for (OfflinePlayer offlinePlayer : offlinePlayers) {
+            if (Objects.equals(offlinePlayer.getName(), sender.getName())) return true;
+        }
+        return false;
+    }
+
     public static boolean isPlayer(CommandSender sender) {
-        return sender instanceof Player;
+        return (sender instanceof Player || isOfflinePlayer(sender));
+    }
+
+    @Nullable
+    public static OfflinePlayer getOfflinePlayerByName(String playerName) {
+        @NotNull OfflinePlayer[] offlinePlayers = plugin.getServer().getOfflinePlayers();
+
+        for (OfflinePlayer offlinePlayer : offlinePlayers) {
+            if (offlinePlayer.getName() != null) {
+                if (offlinePlayer.getName().equals(playerName)) {
+                    return offlinePlayer;
+                }
+            }
+        }
+        return null;
     }
 
     public static Player getPlayerByName(String playerName) {
         return plugin.getServer().getPlayer(playerName);
     }
+
 }

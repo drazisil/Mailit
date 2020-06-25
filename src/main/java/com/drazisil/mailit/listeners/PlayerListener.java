@@ -41,7 +41,7 @@ public class PlayerListener implements Listener {
         int pkgCount = mailboxManager.getPackageCountByReceiver(player);
 
         if (pkgCount == 0) {
-            player.sendMessage(format("You have no packages in your mailbox.", pkgCount));
+            player.sendMessage("You have no packages in your mailbox.");
             return;
         }
 
