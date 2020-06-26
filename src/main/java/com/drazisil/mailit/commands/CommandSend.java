@@ -20,15 +20,17 @@ package com.drazisil.mailit.commands;
 
 import com.drazisil.mailit.MailPackage;
 import com.drazisil.mailit.MailboxManager;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.drazisil.mailit.Mailit.logger;
 import static com.drazisil.mailit.Mailit.plugin;
-import static com.drazisil.mailit.PlayerUtil.getPlayerByName;
+import static com.drazisil.mailit.PlayerUtil.getOfflinePlayerByName;
 import static com.drazisil.mailit.PlayerUtil.isPlayer;
 import static java.lang.String.format;
 
@@ -49,7 +51,7 @@ public class CommandSend implements CommandExecutor {
 
         // Check if the argument is a player
         String receivingPlayerName = args[0];
-        Player receivingPlayer = getPlayerByName(receivingPlayerName);
+        @Nullable OfflinePlayer receivingPlayer = getOfflinePlayerByName(receivingPlayerName);
         if (receivingPlayer == null) {
             sender.sendMessage("Unable to locate that player, please check the spelling.");
             return true;

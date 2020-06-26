@@ -44,15 +44,14 @@ public class MailPackage implements InventoryHolder {
     private final UUID id;
     private boolean isOpen = false;
 
-    public MailPackage(@NotNull Player playerFrom, @NotNull Player playerTo) {
+    public MailPackage(@NotNull Player playerFrom, @NotNull OfflinePlayer playerTo) {
         this.id = UUID.randomUUID();
         this.from = playerFrom;
         this.to = playerTo;
         this.contents = createInventory(
                 this,
                 packageSize,
-                format("Package from %s to %s",
-                        from.getName(),
+                format("Package to %s",
                         to.getName()));
     }
 
@@ -74,8 +73,7 @@ public class MailPackage implements InventoryHolder {
         this.contents = createInventory(
                 this,
                 packageSize,
-                format("Package from %s to %s",
-                        from.getName(),
+                format("Package to %s",
                         to.getName()));
 
         this.contents.setStorageContents(items);
@@ -127,11 +125,19 @@ public class MailPackage implements InventoryHolder {
         }
 
         try {
-            plugin.getDatabaseManager().update(this);
+            plugin.getDatabaseManager().update(
+                    id,
+                    from.getName(),
+                    to.getName(),
+                    contents.getStorageContents());
             logger.info(format("Package with id %s was saved.", getId()));
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+    }
+
+    private @NotNull ItemStack[] contentsToArray() {
+        return getInventory().getStorageContents();
     }
 
     private void delete() throws SQLException {

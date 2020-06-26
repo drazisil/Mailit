@@ -18,6 +18,7 @@
 
 package com.drazisil.mailit;
 
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +42,7 @@ public class MailboxManager {
         return playerPackages.size();
     }
 
-    public MailPackage newPackage(Player sendingPlayer, Player receivingPlayer) {
+    public MailPackage newPackage(Player sendingPlayer, OfflinePlayer receivingPlayer) {
 
         return new MailPackage(sendingPlayer, receivingPlayer);
 

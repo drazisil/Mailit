@@ -18,6 +18,8 @@
 
 package com.drazisil.mailit;
 
+import org.bukkit.inventory.ItemStack;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,22 +51,54 @@ public class DatabaseManager {
     }
 
     public void createTables() throws SQLException {
-        String stm = "CREATE table if not exists packages (\"id\" text unique , \"from\" text, \"to\" text, \"contents\" text)";
+        String packages = "CREATE table if not exists packages (\"id\" text unique , \"from\" text, \"to\" text, \"contents\" text)";
 
         conn.createStatement()
-                .executeUpdate(stm);
+                .executeUpdate(packages);
+
+        String items = "CREATE table if not exists items (\"id\" text, \"slot\" number, \"count\" number, \"itemdata\" text, \"metadata\" text)";
+
+        conn.createStatement()
+                .executeUpdate(items);
     }
 
-    public void update(MailPackage mailPackage) throws SQLException {
-        String stm = format("insert into packages (\"id\", \"from\", \"to\", \"contents\") values ('%s', '%s', '%s', '%s') on conflict(\"id\") do update set \"contents\" = '%s'",
-                mailPackage.getId(),
-                mailPackage.getFrom().getName(),
-                mailPackage.getTo().getName(),
-                Arrays.toString(mailPackage.getInventory().getStorageContents()),
-                Arrays.toString(mailPackage.getInventory().getStorageContents()));
+    public void update(UUID id, String playerFrom, String playerTo, ItemStack[] contents) throws SQLException {
+        String packages = format("insert into packages (\"id\", \"from\", \"to\", \"contents\") values ('%s', '%s', '%s', '%s') on conflict(\"id\") do update set \"contents\" = '%s'",
+                id,
+                playerFrom,
+                playerTo,
+                Arrays.toString(contents),
+                Arrays.toString(contents));
 
         conn.createStatement()
-                .executeUpdate(stm);
+                .executeUpdate(packages);
+
+        ArrayList<ItemStack> itemsArr = new ArrayList<>(Arrays.asList(contents));
+
+        for (int i = 0; i < itemsArr.size(); i++) {
+
+            if (itemsArr.get(i) != null) {
+
+                String metadata = null;
+
+                if (itemsArr.get(i).hasItemMeta()) {
+                    metadata = itemsArr.get(i).getItemMeta().toString();
+                }
+
+                String items = format("insert into items (\"id\", \"slot\", \"count\", \"itemdata\", \"metadata\") values ('%s', '%d', '%d', '%s', '%s')",
+                        id,
+                        i,
+                        itemsArr.get(i).getAmount(),
+                        itemsArr.get(i).getType(),
+                        metadata);
+
+                conn.createStatement()
+                        .executeUpdate(items);
+
+            }
+        }
+
+
     }
 
     public void delete(MailPackage mailPackage) throws SQLException {
