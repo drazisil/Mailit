@@ -21,8 +21,14 @@ package com.drazisil.mailit;
 import com.google.common.collect.Lists;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+
+import static com.drazisil.mailit.Mailit.logger;
+import static com.drazisil.mailit.Mailit.plugin;
+import static java.lang.String.format;
 
 public class ItemStackUtil {
     public static ItemStack[] deserialize(String serialisedString) {
@@ -63,4 +69,66 @@ public class ItemStackUtil {
 
         return new ItemStack(material, count);
     }
+
+    public static String toString(ItemStack itemStack) {
+        String itemMeta = "";
+
+        StringBuilder itemString = new StringBuilder("ItemStack{").append(itemStack.getType().name()).append(" x ").append(itemStack.getAmount());
+        if (itemStack.hasItemMeta()) {
+            itemMeta = String.valueOf(itemStack.getItemMeta());
+        }
+        itemString.append('}');
+
+        if (!itemMeta.equals("")) itemString.append("|").append(itemMeta);
+
+        logger.warning(itemString.toString());
+
+        return itemString.toString();
+    }
+
+    public static ItemStack getItemStack(String itemString) {
+        // Example string: ItemStack{FILLED_MAP x 1}|MAP_META:{meta-type=MAP, map-id=7}
+
+        if (itemString.contains("|")) {
+            // There is meta in this string, split it.
+            String[] parts = itemString.split("\\|");
+            String item = parts[0];
+            String meta = parts[1];
+
+            ItemStack itemStack = parseItemStackString(item);
+            logger.warning("1.1: " + itemStack);
+
+            ItemMeta itemMeta = parseItemMetaString(itemStack, meta);
+            logger.warning("1.2: " + itemMeta);
+            return itemStack;
+
+        }
+        ItemStack itemStack = parseItemStackString(itemString);
+        logger.warning("2: " + itemStack);
+        return itemStack;
+
+    }
+
+    @Nullable
+    private static <T extends ItemMeta> T parseItemMetaString(ItemStack itemStack, String itemMeta) {
+        // First, get the itemMeta type
+        @Nullable T defaultMeta = (T) plugin.getMetaFactory().getItemMeta(itemStack.getType());
+
+        if (defaultMeta == null) {
+            logger.severe(format("Unable to locate a meta type for material %s, why did you request meta for it?", itemStack.getType()));
+            return null;
+        }
+
+        logger.warning(format("Located %s for %s, we can continue.", defaultMeta, itemStack.getType()));
+
+        return defaultMeta;
+    }
+
+
+//    public static ItemStack fromString(String item, String meta) {
+//        boolean itemHasMeta = false;
+//
+//        if (!item.equals("")) itemHasMeta = true;
+//
+//    }
 }

@@ -79,17 +79,23 @@ public class DatabaseManager {
 
             if (itemsArr.get(i) != null) {
 
+                ItemStack item = itemsArr.get(i);
+
+                String itemString = ItemStackUtil.toString(item);
+
+                ItemStackUtil.getItemStack(itemString);
+
                 String metadata = null;
 
-                if (itemsArr.get(i).hasItemMeta()) {
-                    metadata = itemsArr.get(i).getItemMeta().toString();
+                if (item.hasItemMeta()) {
+                    metadata = item.getItemMeta().toString();
                 }
 
                 String items = format("insert into items (\"id\", \"slot\", \"count\", \"itemdata\", \"metadata\") values ('%s', '%d', '%d', '%s', '%s')",
                         id,
                         i,
-                        itemsArr.get(i).getAmount(),
-                        itemsArr.get(i).getType(),
+                        item.getAmount(),
+                        item.getType(),
                         metadata);
 
                 conn.createStatement()

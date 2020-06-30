@@ -18,6 +18,7 @@
 
 package com.drazisil.mailit;
 
+import org.bukkit.inventory.ItemFactory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -32,23 +33,11 @@ public final class Mailit extends JavaPlugin {
 
     private DatabaseManager databaseManager;
     private MailboxManager mailboxManager;
+    private static ItemFactory itemFactory;
+    private ItemFactory metaItemFactory;
 
-    @Override
-    public void onEnable() {
-        // Plugin startup logic
-
-        plugin = this;
-        logger = plugin.getLogger();
-        mailboxManager = new MailboxManager();
-        databaseManager = new DatabaseManager();
-
-        registerEventListeners();
-
-        registerCommands();
-
-        plugin.saveDefaultConfig();
-
-        databaseManager.connect();
+    public static ItemFactory getItemFactory() {
+        return itemFactory;
     }
 
     @Override
@@ -62,5 +51,29 @@ public final class Mailit extends JavaPlugin {
 
     public MailboxManager getMailboxManager() {
         return this.mailboxManager;
+    }
+
+    @Override
+    public void onEnable() {
+        // Plugin startup logic
+
+        plugin = this;
+        logger = plugin.getLogger();
+        this.metaItemFactory = getServer().getItemFactory();
+        mailboxManager = new MailboxManager();
+        databaseManager = new DatabaseManager();
+        itemFactory = getServer().getItemFactory();
+
+        registerEventListeners();
+
+        registerCommands();
+
+        plugin.saveDefaultConfig();
+
+        databaseManager.connect();
+    }
+
+    public ItemFactory getMetaFactory() {
+        return this.metaItemFactory;
     }
 }
