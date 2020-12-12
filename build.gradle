@@ -41,7 +41,7 @@ repositories {
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.16.1-R0.1-SNAPSHOT'
     compileOnly 'org.jetbrains:annotations:20.1.0'
-    compile 'org.xerial:sqlite-jdbc:3.8.11'
+    compile 'org.xerial:sqlite-jdbc:3.34.0'
 }
 
 processResources {
